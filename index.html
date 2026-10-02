@@ -1,1 +1,89 @@
-placeholder
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="description" content="PayOwn — create invoices and get paid via Lightning, Cash App, ACH, or wire. No Stripe. Funds go to accounts you control." />
+  <title>PayOwn — Invoice & get paid</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d6b4c'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='white' font-size='16' font-family='system-ui' font-weight='800'%3EP%3C/text%3E%3C/svg%3E" />
+</head>
+<body>
+  <div class="wrap wrap-wide">
+    <header class="app-bar">
+      <a class="logo" href="./">
+        <span class="logo-mark">P</span>
+        PayOwn
+        <span class="badge-free">free</span>
+      </a>
+      <span class="tagline">Invoice · multi-rail checkout</span>
+    </header>
+    <div class="ai-box" id="aiBox">
+      <h2>✨ AI assist</h2>
+      <p style="font-size:0.85rem;color:var(--ink-muted);margin-bottom:0.65rem;">Describe the invoice in plain English — we’ll fill the form. Runs on-device; no API key.</p>
+      <textarea id="aiPrompt" placeholder='e.g. “make a $2600 invoice for Acme, net 7, LN + Cash App”'></textarea>
+      <div class="btn-row">
+        <button type="button" class="btn btn-primary" id="aiApply">Apply to form</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="aiClear">Clear</button>
+      </div>
+      <p class="ai-examples">
+        Try:
+        <button type="button" data-ex="make a $2600 invoice for Acme Corp, net 7, LN + Cash App">$2600 Acme net 7</button>
+        ·
+        <button type="button" data-ex="invoice Jane $450 for logo design due Friday, Cash App and ACH">$450 logo Friday</button>
+        ·
+        <button type="button" data-ex="$1200 retainer for Bluebird LLC due in 14 days, Lightning and wire">$1200 retainer</button>
+      </p>
+    </div>
+    <section class="card" id="profileCard">
+      <h2><span class="step">1</span> Your payment profile</h2>
+      <p style="font-size:0.82rem;color:var(--ink-muted);margin-bottom:1rem;">Saved in this browser. Export JSON to move devices. Buyers pay into <em>your</em> accounts — PayOwn never holds funds.</p>
+      <div class="grid-2">
+        <div class="field"><label for="displayName">Display name</label><input type="text" id="displayName" placeholder="Alex Rivera" autocomplete="name" /></div>
+        <div class="field"><label for="email">Email</label><input type="email" id="email" placeholder="you@studio.com" autocomplete="email" /></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label for="lnAddress">Lightning address</label><input type="text" id="lnAddress" class="mono" placeholder="you@coinos.io" /><p class="hint">LNURL-pay style (e.g. name@coinos.io). Powers the buyer QR.</p></div>
+        <div class="field"><label for="btcAddress">On-chain BTC (optional)</label><input type="text" id="btcAddress" class="mono" placeholder="bc1q…" /></div>
+      </div>
+      <div class="grid-2">
+        <div class="field"><label for="cashtag">Cash App cashtag</label><input type="text" id="cashtag" placeholder="$yourname" /></div>
+        <div class="field"><label for="venmo">Venmo / PayPal.me (optional)</label><input type="url" id="venmo" placeholder="https://venmo.com/u/…" /></div>
+      </div>
+      <details class="advanced" id="achDetails"><summary>ACH / bank details</summary>
+        <div class="grid-2"><div class="field"><label for="bankName">Bank name</label><input type="text" id="bankName" placeholder="Chase / Mercury / …" /></div><div class="field"><label for="achMemo">ACH memo / reference</label><input type="text" id="achMemo" placeholder="Invoice #…" /></div></div>
+        <div class="grid-2"><div class="field"><label for="routing">Routing number</label><input type="text" id="routing" class="mono" placeholder="021000021" inputmode="numeric" /></div><div class="field"><label for="account">Account number</label><input type="text" id="account" class="mono" placeholder="••••••••" inputmode="numeric" /></div></div>
+      </details>
+      <details class="advanced" id="wireDetails"><summary>Wire instructions (optional)</summary>
+        <div class="field"><label for="wire">Wire details</label><textarea id="wire" placeholder="Bank, SWIFT/BIC, beneficiary name & address…"></textarea></div>
+      </details>
+      <div class="profile-actions">
+        <button type="button" class="btn btn-secondary btn-sm" id="saveProfile">Save profile</button>
+        <button type="button" class="btn btn-ghost btn-sm" id="exportProfile">Export JSON</button>
+        <label class="btn btn-ghost btn-sm" style="cursor:pointer;margin:0;">Import JSON<input type="file" id="importProfile" accept="application/json,.json" hidden /></label>
+        <button type="button" class="btn btn-ghost btn-sm" id="loadDemo">Load demo profile</button>
+      </div>
+    </section>
+    <section class="card" id="invoiceCard">
+      <h2><span class="step">2</span> Invoice details</h2>
+      <div class="grid-2"><div class="field"><label for="amount">Amount (USD)</label><input type="number" id="amount" min="0.01" step="0.01" placeholder="2600.00" /></div><div class="field"><label for="dueDate">Due date</label><input type="date" id="dueDate" /></div></div>
+      <div class="grid-2"><div class="field"><label for="buyerLabel">Buyer / client</label><input type="text" id="buyerLabel" placeholder="Acme Corp" /></div><div class="field"><label for="memo">Memo / description</label><input type="text" id="memo" placeholder="Website redesign — phase 2" /></div></div>
+    </section>
+    <section class="card">
+      <h2><span class="step">3</span> Share pay link</h2>
+      <p style="font-size:0.85rem;color:var(--ink-muted);margin-bottom:0.85rem;">Link encodes the invoice in the URL fragment — no server needed. Works offline once cached.</p>
+      <button type="button" class="btn btn-primary btn-lg" id="generateBtn">Generate pay link</button>
+      <div class="share-box" id="shareBox" hidden>
+        <label>Shareable pay link</label>
+        <div class="share-url"><input type="text" id="shareUrl" readonly /><button type="button" class="btn btn-primary btn-sm" id="copyShare">Copy</button></div>
+        <div class="btn-row"><a class="btn btn-secondary btn-sm" id="openPay" href="#" target="_blank" rel="noopener">Open buyer page</a><span class="watermark">PayOwn · free</span></div>
+      </div>
+    </section>
+    <div class="tools-strip"><strong>Recommended tools</strong> — <a href="https://coinos.io" target="_blank" rel="noopener">Lightning wallet (Coinos)</a> <a href="https://mercury.com/?utm_source=payown" target="_blank" rel="noopener">Mercury banking</a> <a href="https://relayfi.com/?utm_source=payown" target="_blank" rel="noopener">Relay banking</a></div>
+    <footer class="site-foot">PayOwn does not hold funds or process ACH. You get paid into accounts you control.<br /><span class="watermark" style="margin-top:0.5rem;">PayOwn · free</span></footer>
+  </div>
+  <div class="toast" id="toast" role="status"></div>
+  <script src="./app.js"></script>
+  <script>PayOwn.initBuilder();</script>
+</body>
+</html>
