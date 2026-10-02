@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Pay invoice — PayOwn</title>
+  <link rel="stylesheet" href="./styles.css" />
+  <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+  <div class="wrap">
+    <header class="app-bar">
+      <a class="logo" href="./"><span class="logo-mark">P</span> PayOwn</a>
+      <span class="watermark">PayOwn · free</span>
+    </header>
+    <div id="paidBanner" class="paid-banner" hidden>✓ Marked paid</div>
+    <div id="errBox" class="disclaimer" hidden></div>
+    <div id="payContent" hidden>
+      <div class="pay-hero">
+        <div class="pay-amount" id="payAmount">$0.00</div>
+        <div class="pay-memo" id="payMemo"></div>
+        <div class="pay-meta">Due <span id="payDue">—</span> · From <span class="pay-seller" id="paySeller">—</span></div>
+        <div class="pay-meta" id="payBuyer" style="margin-top:0.15rem;"></div>
+      </div>
+      <section class="card">
+        <h2>Pay with Bitcoin / Lightning</h2>
+        <div class="qr-wrap">
+          <canvas id="qrCanvas"></canvas>
+          <div class="qr-label" id="qrLabel"></div>
+        </div>
+      </section>
+      <section class="card">
+        <h2>Other ways to pay</h2>
+        <div class="rail-list" id="railList"></div>
+      </section>
+      <section class="card">
+        <button type="button" class="btn btn-secondary btn-block" id="markPaid">Mark as paid (honor system)</button>
+      </section>
+      <p class="disclaimer">You are paying into accounts the seller controls. PayOwn does not hold funds and does not process ACH. Verify details before sending.</p>
+    </div>
+  </div>
+  <div class="toast" id="toast"></div>
+  <script src="./app.js"></script>
+  <script>PayOwn.initPayPage();</script>
+</body>
+</html>
