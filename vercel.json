@@ -1,7 +1,15 @@
 {
+  "installCommand": "npm install --no-audit --no-fund",
+  "buildCommand": "node _src/build.mjs",
+  "outputDirectory": "out",
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
+    { "source": "/i/", "destination": "/i.html" },
     { "source": "/i", "destination": "/i.html" }
+  ],
+  "headers": [
+    { "source": "/sw.js", "headers": [{ "key": "Cache-Control", "value": "no-cache" }, { "key": "Service-Worker-Allowed", "value": "/" }] },
+    { "source": "/manifest.webmanifest", "headers": [{ "key": "Content-Type", "value": "application/manifest+json" }] }
   ]
 }

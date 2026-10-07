@@ -1,0 +1,17 @@
+{
+  "name": "NoiceInvoice",
+  "shortName": "noice",
+  "tagline": "Invoices that get you paid",
+  "description": "Make an invoice, share one pay link, and get paid by Lightning, Bitcoin, Cash App, Venmo, PayPal, Zelle or bank transfer straight into your own accounts. Free. We never hold funds.",
+  "siteUrl": "https://payown.vercel.app",
+  "storagePrefix": "payown_",
+  "wordmark": "/brand/logo/noiceinvoice-wordmark.svg",
+  "wordmarkOnDark": "/brand/logo/noiceinvoice-wordmark-dark.svg",
+  "themeColorToken": "--ni-plum-950",
+  "backgroundColorToken": "--ni-paper",
+  "_notes": {
+    "name": "Product name everywhere (HTML, SEO/OG, manifest, JS). Flip the brand = change this one line and rebuild.",
+    "storagePrefix": "Legacy localStorage key prefix from the live site. Not shown to users; keep it so saved profiles carry over.",
+    "siteUrl": "Canonical + sitemap host. Stays on payown.vercel.app until the domain is bought."
+  }
+}

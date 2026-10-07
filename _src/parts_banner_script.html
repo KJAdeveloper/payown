@@ -1,0 +1,18 @@
+<script>
+(function(){
+  var el=document.getElementById("demoBanner");
+  if(!el)return;
+  function show(){el.hidden=false;}
+  var h=location.hash||"";
+  if(/#demo\b|#sample\b/i.test(h)){show();return;}
+  var m=h.match(/[#&]i=([^&]*)/);
+  if(!m)return;
+  try{
+    var t=m[1].replace(/-/g,"+").replace(/_/g,"/");
+    while(t.length%4)t+="=";
+    var o=JSON.parse(atob(t));
+    var blob=((o.seller&&o.seller.displayName)||"")+" "+(o.buyerLabel||"")+" "+(o.memo||"")+" "+(o.id||"");
+    if(o.id==="inv_demo_sample"||/FAKE|SAMPLE|demo only|not a real/i.test(blob))show();
+  }catch(e){}
+})();
+</script>
