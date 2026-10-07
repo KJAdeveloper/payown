@@ -3,44 +3,81 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Pay invoice — PayOwn</title>
-  <link rel="stylesheet" href="./styles.css" />
+  <meta name="description" content="Pay this invoice via Lightning, Cash App, or ACH/wire. Funds go to the seller's accounts - PayOwn never holds money." />
+  <title>Pay invoice - PayOwn</title>
+  <link rel="stylesheet" href="/styles.css" />
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='8' fill='%230d6b4c'/%3E%3Ctext x='16' y='22' text-anchor='middle' fill='white' font-size='16' font-family='system-ui' font-weight='800'%3EP%3C/text%3E%3C/svg%3E" />
   <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
 </head>
 <body>
   <div class="wrap">
     <header class="app-bar">
-      <a class="logo" href="./"><span class="logo-mark">P</span> PayOwn</a>
-      <span class="watermark">PayOwn · free</span>
+      <a class="logo" href="/"><span class="logo-mark">P</span> PayOwn</a>
+      <span class="watermark">PayOwn | free</span>
     </header>
-    <div id="paidBanner" class="paid-banner" hidden>✓ Marked paid</div>
-    <div id="errBox" class="disclaimer" hidden></div>
+
+    <div id="paidBanner" class="paid-banner" hidden>OK Marked paid</div>
+    <div id="errBox" class="disclaimer err-box" hidden></div>
+
     <div id="payContent" hidden>
       <div class="pay-hero">
+        <p class="pay-eyebrow">Invoice from</p>
+        <p class="pay-seller-lg" id="paySeller">-</p>
+        <p class="pay-amount-label">Amount due</p>
         <div class="pay-amount" id="payAmount">$0.00</div>
         <div class="pay-memo" id="payMemo"></div>
-        <div class="pay-meta">Due <span id="payDue">—</span> · From <span class="pay-seller" id="paySeller">—</span></div>
-        <div class="pay-meta" id="payBuyer" style="margin-top:0.15rem;"></div>
+        <div class="pay-meta">Due <span id="payDue">-</span></div>
+        <div class="pay-meta" id="payBuyer"></div>
+        <p class="pay-dest">You're paying into accounts this seller controls — not PayOwn.</p>
       </div>
-      <section class="card">
+
+      <div class="rail-tabs" id="railTabs" role="tablist">
+        <button type="button" class="rail-tab is-active" data-rail="ln" role="tab">Lightning</button>
+        <button type="button" class="rail-tab" data-rail="cash" role="tab">Cash App</button>
+        <button type="button" class="rail-tab" data-rail="bank" role="tab">Bank</button>
+      </div>
+
+      <section class="card pay-primary rail-panel" data-rail="ln" id="railPanelLn">
         <h2>Pay with Bitcoin / Lightning</h2>
+        <p class="helper">Funds go to the seller’s address.</p>
         <div class="qr-wrap">
           <canvas id="qrCanvas"></canvas>
-          <div class="qr-label" id="qrLabel"></div>
+          <div class="qr-label" id="qrLabel">Scan with your wallet</div>
         </div>
       </section>
-      <section class="card">
-        <h2>Other ways to pay</h2>
-        <div class="rail-list" id="railList"></div>
+
+      <section class="card rail-panel" data-rail="cash" id="railPanelCash" hidden>
+        <h2>Cash App</h2>
+        <p class="helper">Opens Cash App with the seller’s cashtag and amount.</p>
       </section>
+
+      <section class="card rail-panel" data-rail="bank" id="railPanelBank" hidden>
+        <h2>Bank transfer</h2>
+        <p class="helper">ACH or wire into the seller’s own account.</p>
+      </section>
+
       <section class="card">
         <button type="button" class="btn btn-secondary btn-block" id="markPaid">Mark as paid (honor system)</button>
       </section>
-      <p class="disclaimer">You are paying into accounts the seller controls. PayOwn does not hold funds and does not process ACH. Verify details before sending.</p>
+
+      <p class="disclaimer">
+        You are paying into accounts the seller controls. PayOwn does not hold funds and does not process ACH.
+        Verify the Lightning address, cashtag, and bank details before sending.
+      </p>
     </div>
   </div>
   <div class="toast" id="toast"></div>
-  <script src="./app.js"></script>
-  <script>PayOwn.initPayPage();</script>
+  <script src="/app.js"></script>
+  <script>
+    try { PayOwn.initPayPage(); }
+    catch (e) {
+      var err = document.getElementById("errBox");
+      if (err) {
+        err.hidden = false;
+        err.innerHTML = "<p>This pay link is missing or damaged. Ask the seller to send it again.</p>" +
+          '<p class="err-actions"><a class="btn btn-primary" href="/">Back to PayOwn</a></p>';
+      }
+    }
+  </script>
 </body>
 </html>
